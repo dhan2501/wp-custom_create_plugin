@@ -49,8 +49,26 @@ function my_plugin_deactivation(){
 }
 register_deactivation_hook(__FILE__, 'my_plugin_deactivation');
 
-function my_sc_fun(){
-    return 'Function call';
+
+// Create shortcode using php
+
+
+function my_shortcode($atts){
+    $atts = array_change_key_case($atts, CASE_LOWER);
+    $atts = shortcode_atts(array(
+        'msg' => 'I am Good',
+        'note' => 'default'
+    ), $atts);
+
+    // ob_start();
+    ?>
+    <!-- <h1>Youtube</h1> -->
+    <?php
+    // $html = ob_get_clean();
+
+    // return 'Result: '. $atts['msg'];
+    // return $html;
+    include 'notice.php';
 }
-add_shortcode('my-sc','my_sc_fun');
+add_shortcode('my-sc','my_shortcode');
 
