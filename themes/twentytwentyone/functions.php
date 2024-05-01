@@ -653,3 +653,32 @@ if ( ! function_exists( 'wp_get_list_item_separator' ) ) :
 		return __( ', ', 'twentytwentyone' );
 	}
 endif;
+
+
+function create_custom_post_type() {
+    $args = array(
+        'public' => true,
+        'label'  => 'Custom Post Type',
+        'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+        // Add more arguments as needed
+    );
+    register_post_type( 'custom_post_type', $args );
+}
+add_action( 'init', 'create_custom_post_type' );
+
+// Register Custom Taxonomy
+function create_custom_taxonomy() {
+    $args = array(
+        'hierarchical' => true,
+        'labels' => array(
+            'name' => 'Custom Taxonomy',
+            'singular_name' => 'Custom Taxonomy',
+        ),
+        'show_ui' => true,
+        'show_admin_column' => true,
+        'query_var' => true,
+        'rewrite' => array( 'slug' => 'custom_taxonomy' ),
+    );
+    register_taxonomy( 'custom_taxonomy', array( 'custom_post_type' ), $args );
+}
+add_action( 'init', 'create_custom_taxonomy' );
