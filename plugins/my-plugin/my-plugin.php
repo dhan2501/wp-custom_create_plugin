@@ -150,21 +150,24 @@ function my_posts(){
         'offset' => 0,
         'orderby' => 'ID',
         'order' => 'ASC',
+        'meta_key' => 'views',
+        'meta_value' => '3',
+        'meta_compare' => '>='
         // 'tag' => 'river' 
-        'tax_query' => array(
-            'relation' => 'AND', //OR
-            array(
-            'taxnomoy' => 'category', //post group ko  taxnomoy kehte hai.
-            'field' => 'slug',
-            'terms' => array('flat'),
-            'operator' =>'NOT IN'
-            ),
-            array(
-                'taxonomy' => 'category',
-                'field' => 'slug',
-                'terms' => array('plot') 
-            )
-        ) 
+        // 'tax_query' => array(
+        //     'relation' => 'AND', //OR
+        //     array(
+        //     'taxnomoy' => 'category', //post group ko  taxnomoy kehte hai.
+        //     'field' => 'slug',
+        //     'terms' => array('flat'),
+        //     'operator' =>'NOT IN'
+        //     ),
+        //     array(
+        //         'taxonomy' => 'category',
+        //         'field' => 'slug',
+        //         'terms' => array('plot') 
+        //     )
+        // ) 
     );
     $query = new WP_Query($args);
     ob_start();
@@ -174,7 +177,7 @@ function my_posts(){
         <?php
             while($query->have_posts()){
                 $query->the_post();
-                echo '<li>'.get_the_title().'->'.get_the_content().'</li>';
+                echo '<li><a href="'.get_the_permalink().'">'.get_the_title().'</>('.get_post_meta(get_the_ID(), 'views', true).') ->'.get_the_content().'</li>';
             }
         ?>
         
@@ -188,4 +191,29 @@ function my_posts(){
 
 }
 add_shortcode('my-post','my_posts');
+
+
+function head_fun(){
+    if(is_single()){
+        global $post;
+        $views = get_post_meta($post->ID, 'views', true);
+        if($views == ''){
+            add_post_meta($post->ID, 'views', 1);
+
+        }else{
+            $views++;
+            update_post_meta($post->ID, 'views', $views);
+        }
+
+        echo get_post_meta($post->ID, 'views', true);
+    }
+}
+add_action('wp_head', 'head_fun');
+
+
+function views_count(){
+    global $post;
+    return 'Total Views: '.get_post_meta($post->ID, 'views', true);
+}
+add_shortcode('views-count', 'views_count');
 
