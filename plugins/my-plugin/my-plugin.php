@@ -145,7 +145,26 @@ add_shortcode('my-sc', 'my_custom_shortcode');
 
 function my_posts(){
     $args = array(
-        'post_type' => 'post'
+        'post_type' => 'post',
+        'posts_per_page' => 3,
+        'offset' => 0,
+        'orderby' => 'ID',
+        'order' => 'ASC',
+        // 'tag' => 'river' 
+        'tax_query' => array(
+            'relation' => 'AND', //OR
+            array(
+            'taxnomoy' => 'category', //post group ko  taxnomoy kehte hai.
+            'field' => 'slug',
+            'terms' => array('flat'),
+            'operator' =>'NOT IN'
+            ),
+            array(
+                'taxonomy' => 'category',
+                'field' => 'slug',
+                'terms' => array('plot') 
+            )
+        ) 
     );
     $query = new WP_Query($args);
     ob_start();
