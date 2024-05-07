@@ -217,3 +217,24 @@ function views_count(){
 }
 add_shortcode('views-count', 'views_count');
 
+
+function my_plugin_page_func(){
+    // echo 'Hi';
+    include 'admin/main-page.php';
+}
+
+function my_plugin_subpage_func(){
+    echo 'This is sub menu page';
+}
+
+function my_plugin_menu(){
+    add_menu_page('My plugin Page', 'My plugin Page', 'manage_options','my-plugin-page'
+    , 'my_plugin_page_func', '',6);
+
+    add_submenu_page('my-plugin-page', 'All Emp', 'All Emp', 'manage_options',
+     'my-plugin-page', 'my_plugin_page_func');
+
+    add_submenu_page('my-plugin-page', 'My Plugin Sub page', 'My Plugin sub Page', 'manage_options','my-plugin-subpage','my_plugin_subpage_func');
+
+}
+add_action('admin_menu', 'my_plugin_menu');
