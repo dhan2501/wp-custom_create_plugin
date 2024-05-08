@@ -88,7 +88,8 @@ wp_enqueue_style('my-custom-style', $path_style, '', $ver_style);
 
 //script includes
 wp_enqueue_script('my-custom-js', $path_js, $dep, $ver, true); //dependencies
-wp_add_inline_script('my-custom-js', 'var is_login = '.$is_login.';','before');
+// wp_add_inline_script('my-custom-js', 'var is_login = '.$is_login.';','before');
+wp_add_inline_script('my-custom-js', 'var ajaxUrl = "'.admin_url('admin-ajax.php').'";','before');
 
 // if(is_page('home')){
 //     wp_enqueue_script('my-custom-js', $path_js, $dep, $ver, true); //dependencies
@@ -238,3 +239,21 @@ function my_plugin_menu(){
 
 }
 add_action('admin_menu', 'my_plugin_menu');
+
+add_action('wp_ajax_my_search_func','my_search_func');
+function my_search_func(){
+    global $wpdb,$table_prefix;
+    $wp_emp = $table_prefix.'emp';
+    $search_term = $_POST['search_term'];
+    if(!empty($_GET['search_term'])){
+        $q = "SELECT * FROM `$wp_emp` WHERE `name` LIKE '%".$search_term."%';";
+    }else{
+        $q = "SELECT * FROM `$wp_emp`";
+    }
+    $results = $wpdb->get_results($q);
+    echo '<pre>';
+    print_r($results);
+    echo '</pre>';
+    // echo $search_term;
+    wp_die();
+}
