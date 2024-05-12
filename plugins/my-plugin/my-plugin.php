@@ -244,6 +244,7 @@ add_action('wp_ajax_my_search_func','my_search_func');
 function my_search_func(){
     global $wpdb,$table_prefix;
     $wp_emp = $table_prefix.'emp';
+    // print_r($wp_emp);
     $search_term = $_POST['search_term'];
     if(!empty($_GET['search_term'])){
         $q = "SELECT * FROM `$wp_emp` WHERE `name` LIKE '%".$search_term."%';";
@@ -251,9 +252,22 @@ function my_search_func(){
         $q = "SELECT * FROM `$wp_emp`";
     }
     $results = $wpdb->get_results($q);
-    echo '<pre>';
-    print_r($results);
-    echo '</pre>';
+    // echo '<pre>';
+    // print_r($results);
+    // echo '</pre>';
     // echo $search_term;
+    ob_start();
+    foreach($results as $row){
+        ?>
+        <tr>
+            <td><?php echo $row->ID; ?></td>
+            <td><?php echo $row->name; ?></td>
+            <td><?php echo $row->email; ?></td>
+            <td><?php echo $row->phone; ?></td>
+        </tr>
+        <?php
+    }
+
+    echo ob_get_clean();
     wp_die();
 }

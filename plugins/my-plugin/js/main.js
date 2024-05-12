@@ -14,7 +14,8 @@ jQuery(document).ready(function($){
             processData: false,
             contentType: false,
             success: function(response){
-                console.log(response);
+                // console.log(response);
+                $('#my-table-result').html(response);
             },
             error:function(){
                 console.log('error');
