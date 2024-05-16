@@ -6,10 +6,10 @@ jQuery(document).ready(function($){
         // console.log(search_term);
         let formData = new FormData();
         formData.append('action','my_search_func');
-        formData.append('search-term', search_term);
+        formData.append('search_term', search_term);
         $.ajax({
             url: ajaxUrl,
-            type:'post',
+            type: 'post',
             data: formData,
             processData: false,
             contentType: false,

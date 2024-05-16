@@ -241,13 +241,15 @@ function my_plugin_menu(){
 add_action('admin_menu', 'my_plugin_menu');
 
 add_action('wp_ajax_my_search_func','my_search_func');
+add_action('wp_ajax_nopriv_my_search_func','my_search_func');
+
 function my_search_func(){
     global $wpdb,$table_prefix;
     $wp_emp = $table_prefix.'emp';
     // print_r($wp_emp);
     $search_term = $_POST['search_term'];
-    if(!empty($_GET['search_term'])){
-        $q = "SELECT * FROM `$wp_emp` WHERE `name` LIKE '%".$search_term."%';";
+    if(!empty('search_term')){
+        $q = "SELECT * FROM `$wp_emp` WHERE `name` LIKE '%".$search_term."%' OR `email` LIKE '%".$search_term."%' OR `phone` LIKE '%".$search_term."%';";
     }else{
         $q = "SELECT * FROM `$wp_emp`";
     }
@@ -260,7 +262,7 @@ function my_search_func(){
     foreach($results as $row){
         ?>
         <tr>
-            <td><?php echo $row->ID; ?></td>
+            <td><?php echo $row->id; ?></td>
             <td><?php echo $row->name; ?></td>
             <td><?php echo $row->email; ?></td>
             <td><?php echo $row->phone; ?></td>
@@ -271,3 +273,45 @@ function my_search_func(){
     echo ob_get_clean();
     wp_die();
 }
+
+add_shortcode('my-data', 'my_table_data');
+function my_table_data(){
+    include 'admin/main-page.php';
+}
+
+function register_my_cpt(){
+    $labels = array(
+        'name' => 'Cars',
+        'Singular_name' => 'Car',        
+    );
+    $supports = array('title','editor','comments','thumbnail','excerpt');
+    $options = array(
+        'labels' => $labels,
+        'public' => true,
+        
+        'supports' => $supports,
+        'has_archive' => true,
+        'rewrite' => array('slug' => 'cars'),
+        'show_in_rest' =>true,
+        // 'taxonomies' => array('category'),
+        'taxonomies' => array('car_types'),
+        'publicly_queryable' => true
+    );
+    register_post_type('car', $options);
+}
+add_action('init', 'register_my_cpt');
+
+function register_car_types(){
+    $labels = array(
+        'name' => 'Car Type',
+        'singular_name' => 'Car Types'
+    );
+    $options = array(
+        'labels' => $labels,
+        'hierarchical' => true,
+        'rewrite' => array('slug' => 'car-type'),
+        'show_in_rest' =>true,
+    );
+    register_taxonomy('car-type', array('car'), $options);
+}
+add_action('init','register_car_types');
