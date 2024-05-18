@@ -315,3 +315,12 @@ function register_car_types(){
     register_taxonomy('car-type', array('car'), $options);
 }
 add_action('init','register_car_types');
+
+
+
+function register_users(){
+    ob_start();
+    include 'public/register.php';
+    return ob_get_clean();
+}
+add_shortcode('register-user','register_users');
