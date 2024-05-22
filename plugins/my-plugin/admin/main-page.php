@@ -10,9 +10,9 @@
     $results = $wpdb->get_results($q);
 
     // print_r($result);
-    ob_start();
+    // ob_start();
 ?>
-<div class="wrap">
+<section class="wrap">
     <h2>My Plugin Page</h2>
     <div class="my-form">
 
@@ -33,7 +33,7 @@
 </thead>
 <tbody id="my-table-result">
     <?php
-    foreach($results as $row){
+    foreach($results as $row) :
     ?>
     <tr>
         <td><?php echo $row->id; ?></td>
@@ -42,10 +42,10 @@
         <td><?php echo $row->phone; ?></td>
     </tr>
     <?php
-    }
+    endforeach;
 ?>
 </tbody>
 </table>
-</div>
+</section>
 <?php
-    echo ob_get_clean();
+    // echo ob_get_clean();

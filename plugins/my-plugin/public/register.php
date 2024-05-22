@@ -27,6 +27,7 @@ if(isset($_POST['register'])){
         if(!is_wp_error($result)){
             echo 'User creater ID: '. $result;
             add_user_meta($result, 'type', 'Faculty');
+            update_user_meta($result, 'show_admin_bar_front', false); //admin bar hide code
         }else{
             echo $result->get_error_message();
         }
@@ -38,14 +39,17 @@ if(isset($_POST['register'])){
     }
 }
 ?>
-
-
-<form action="<?php echo get_the_permalink(); ?>" method="post">
-    First Name: <input type="text" name="user_fname" id="user-fname"></br>
-    Last Name: <input type="text" name="user_lname" id="user_lname"></br>
-    Username: <input type="text" name="username" id="username"></br>
-    Email: <input type="email" name="user_email" id="user_email"></br>
-    Password: <input type="password" name="user_pass" id="user_pass"></br>
-    Confirm Password: <input type="password" name="user_con_pass" id="user_con_pass"></br>
-    <input type="submit" class="button" name="register" value="Register">
-</form>
+<div class="form-wrapper">
+    
+    <div class="register-form">
+        <form action="<?php echo get_the_permalink(); ?>" method="post">
+            First Name: <input type="text" name="user_fname" id="user-fname"></br>
+            Last Name: <input type="text" name="user_lname" id="user_lname"></br>
+            Username: <input type="text" name="username" id="username"></br>
+            Email: <input type="email" name="user_email" id="user_email"></br>
+            Password: <input type="password" name="user_pass" id="user_pass"></br>
+            Confirm Password: <input type="password" name="user_con_pass" id="user_con_pass"></br>
+            <input type="submit" class="button" name="register" value="Register">
+        </form>
+    </div>
+</div>

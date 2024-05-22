@@ -16,9 +16,11 @@ Domain Path: /languages
 
 // If this file is called directly, abort.
 if (!defined('ABSPATH')){
-    die("");
+    header("Location: /plugindevelop");
+    die();
 }
 
+// add_action('wp_head', 'addHeaderCode');
 
 function my_plugin_activation(){
     global $wpdb, $table_prefix;
@@ -48,32 +50,6 @@ function my_plugin_deactivation(){
 
 }
 register_deactivation_hook(__FILE__, 'my_plugin_deactivation');
-
-
-// Create shortcode using php
-
-
-// function my_shortcode($atts){
-//     // $atts = array_change_key_case($atts, CASE_LOWER);
-//     $atts = array_change_key_case((array) $atts, CASE_LOWER);
-//     $atts = shortcode_atts(array(
-//         'type' => 'img_gallery',
-//         // 'note' => 'default'
-
-//     ), $atts);
-
-    // ob_start();
-    ?>
-    <!-- <h1>Youtube</h1> -->
-    <?php
-    // $html = ob_get_clean();
-
-    // return 'Result: '. $atts['msg'];
-    // return $html;
-    // include 'slider.php';
-    // include $atts['type'].'.php';
-// }
-// add_shortcode('my-sc','my_shortcode');
 
 function my_custom_scripts(){
 $path_js = plugins_url('js/main.js', __FILE__);
@@ -276,9 +252,12 @@ function my_search_func(){
 
 add_shortcode('my-data', 'my_table_data');
 function my_table_data(){
+    ob_start();
     include 'admin/main-page.php';
+    return ob_get_clean();
 }
 
+// Create custom Create Post
 function register_my_cpt(){
     $labels = array(
         'name' => 'Cars',
@@ -317,10 +296,76 @@ function register_car_types(){
 add_action('init','register_car_types');
 
 
-
+// include registeration page
 function register_users(){
     ob_start();
     include 'public/register.php';
     return ob_get_clean();
 }
 add_shortcode('register-user','register_users');
+
+
+
+// Custom Login code 
+
+function my_login(){
+    if(isset($_REQUEST['user-login'])){
+        $username = esc_sql($_POST['username']);
+        $pass = esc_sql($_POST['pass']);
+        $credentials = array(
+            'user_login' => $username,
+            'user_password' => $pass,
+        );
+        $user = wp_signon($credentials);
+        if(!is_wp_error($user)){
+            // echo 'Success Login';
+            // echo '<pre>';
+            // print_r($user);
+            // echo '</pre>';
+            if($user->roles[0] == 'administrator'){
+                wp_redirect(admin_url());
+                exit;
+            }else{
+                wp_redirect(site_url('profile'));
+                exit;
+            }
+        }else{
+            echo $user->get_error_message();
+        }
+    }
+}
+add_action('template_redirect', 'my_login');
+
+function my_login_form(){
+    ob_start();
+    include 'public/login.php';
+    return ob_get_clean();
+}
+add_shortcode('my-login-form', 'my_login_form');
+
+function my_profile(){
+    ob_start();
+    include 'public/profile.php';
+    return ob_get_clean();
+}
+add_shortcode('my-profile', 'my_profile');
+
+
+function my_check_redirect(){
+    $is_user_logged_in = is_user_logged_in();
+    if($is_user_logged_in && (is_page('login') || is_page('register'))){
+        wp_redirect(site_url('profile'));
+        exit;
+    }elseif(!$is_user_logged_in && is_page('profile')){
+        wp_redirect(site_url('login'));
+        exit;
+    }
+}
+
+add_action('template_redirect','my_check_redirect');
+
+function redirect_after_logout(){
+    wp_redirect(site_url('login'));
+    exit;
+}
+add_action('wp_logout', 'redirect_after_logout');
